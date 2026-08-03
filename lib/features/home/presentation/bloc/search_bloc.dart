@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
-
 import '../../../../core/errors/exceptions.dart';
 import '../../domain/entities/stock_entity.dart';
 import '../../domain/repositories/stock_repository.dart';
