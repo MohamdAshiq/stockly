@@ -3,9 +3,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/constants/app_strings.dart';
 import 'core/routes/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/database/hive_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive storage
+  try {
+    await HiveService.init();
+  } catch (e) {
+    debugPrint('Hive init error: $e');
+  }
 
   // Load .env
   try {
