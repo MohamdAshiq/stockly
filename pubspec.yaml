@@ -21,6 +21,7 @@ dependencies:
   equatable: ^2.1.0
   rxdart: ^0.28.0
   google_fonts: ^8.2.1
+  fl_chart: ^1.2.0
 
 # Dev Dependencies
 dev_dependencies:
