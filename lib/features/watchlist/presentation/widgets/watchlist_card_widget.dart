@@ -12,64 +12,140 @@ class WatchlistCardWidget extends StatelessWidget {
     required this.onDelete,
   });
 
+  List<Color> _getGradientForSymbol(String symbol) {
+    final index = symbol.hashCode.abs() % AppColors.avatarGradients.length;
+    return AppColors.avatarGradients[index];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: AppColors.border, width: 0.5),
+    final gradient = _getGradientForSymbol(stock.symbol);
+    final isNegative = stock.changePercent.contains('-');
+    final initialChar = stock.symbol.isNotEmpty ? stock.symbol[0] : 'S';
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Text(
-          stock.name.isNotEmpty ? stock.name : stock.symbol,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          stock.symbol,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
-        ),
-        trailing: Row(
-          mainAxisSize: .min,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
           children: [
+            // Company Avatar Badge
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: gradient,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Text(
+                  initialChar,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            // Symbol & Name
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    stock.symbol,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    stock.name.isNotEmpty ? stock.name : stock.symbol,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 13,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+
+            // Price & Change Badge
             Column(
-              mainAxisAlignment: .center,
-              crossAxisAlignment: .end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   stock.price > 0
-                      ? 'Rs ${stock.price.toStringAsFixed(2)}'
+                      ? '\$${stock.price.toStringAsFixed(2)}'
                       : 'N/A',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
                     color: stock.price > 0
                         ? AppColors.textPrimary
-                        : AppColors.textSecondary,
+                        : AppColors.textMuted,
                   ),
                 ),
+                const SizedBox(height: 4),
                 if (stock.price > 0)
-                  Text(
-                    stock.changePercent,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: stock.changePercent.contains('-')
-                          ? AppColors.negativePrice
-                          : AppColors.positivePrice,
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isNegative
+                          ? AppColors.negativeBadgeBg
+                          : AppColors.positiveBadgeBg,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      stock.changePercent,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: isNegative
+                            ? AppColors.negativePrice
+                            : AppColors.positivePrice,
+                      ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(width: 12),
+
+            const SizedBox(width: 8),
+
+            // Delete Action Button
             IconButton(
+              splashRadius: 22,
               icon: const Icon(
                 Icons.delete_outline,
-                color: Colors.redAccent,
-                size: 24,
+                color: AppColors.deleteRed,
+                size: 22,
               ),
               onPressed: onDelete,
             ),

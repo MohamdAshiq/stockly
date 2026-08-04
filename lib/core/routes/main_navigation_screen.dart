@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../database/hive_service.dart';
 import '../network/api_client.dart';
+import '../constants/app_colors.dart';
 import '../constants/app_strings.dart';
 import '../../features/home/data/datasources/stock_remote_data_source.dart';
 import '../../features/home/presentation/pages/home_page.dart';
@@ -48,28 +49,72 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(title: Text(_titles[_currentIndex])),
-            body: IndexedStack(index: _currentIndex, children: _pages),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: (index) {
-                if (index == 1) {
-                  context.read<WatchlistBloc>().add(const LoadWatchlistEvent());
-                }
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: AppStrings.homeTabTitle,
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.list_alt),
-                  label: AppStrings.watchlistTabTitle,
+            appBar: AppBar(
+              title: Text(_titles[_currentIndex]),
+              actions: [
+                Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.positiveBadgeBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 4,
+                        backgroundColor: AppColors.positivePrice,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        'Live',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.positivePrice,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
+            ),
+            body: IndexedStack(index: _currentIndex, children: _pages),
+            bottomNavigationBar: Container(
+              height: kBottomNavigationBarHeight + 10,
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: AppColors.border, width: 1),
+                ),
+              ),
+              child: BottomNavigationBar(
+                currentIndex: _currentIndex,
+                onTap: (index) {
+                  if (index == 1) {
+                    context.read<WatchlistBloc>().add(
+                      const LoadWatchlistEvent(),
+                    );
+                  }
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.explore_outlined),
+                    activeIcon: Icon(Icons.explore_rounded),
+                    label: AppStrings.homeTabTitle,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.bookmark_outline_rounded),
+                    activeIcon: Icon(Icons.bookmark_rounded),
+                    label: AppStrings.watchlistTabTitle,
+                  ),
+                ],
+              ),
             ),
           );
         },
